@@ -1,0 +1,26 @@
+{
+  "name": "Galgame Helper",
+  "description": "ACG Helper",
+  "version": "1.0.0",
+  "author": "Jacques De SAGAN",
+  "manifest_version": 2,
+  "permissions": ["tabs", "cookies", "webRequest", "webRequestBlocking", "*://*/*"],
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content.js"]
+    },
+    {
+      "matches": ["*://www.dlsite.com/*"],
+      "js": ["content-dlsite.js"]
+    }
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+  "browser_action": {
+          "default_title": "Galgame Helper",      // optional; shown in tooltip
+          "default_popup": "popup.html"        // optional
+    }
+}
