@@ -1,7 +1,7 @@
 
 function getItem() {
     if( document.querySelector('h1#work_name') ) { // is a dlsite item page
-        var title = document.querySelector('h1#work_name a').textContent;
+        var title = document.querySelector('*[itemprop="title"]').textContent;
         var brand = document.querySelector('*[itemprop="brand"]').textContent;
         var id = document.querySelector('.work_spec_list dd').textContent;
         var genresList = document.querySelectorAll('.work_genre a');
