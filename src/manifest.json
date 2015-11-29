@@ -1,26 +1,35 @@
 {
-  "name": "Galgame Helper",
-  "description": "ACG Helper",
-  "version": "1.0.0",
-  "author": "Jacques De SAGAN",
-  "manifest_version": 2,
-  "permissions": ["tabs", "cookies", "webRequest", "webRequestBlocking", "*://*/*"],
-  "content_scripts": [
-    {
-      "matches": ["*://*/*"],
-      "js": ["content.js"]
+    "name": "Sora Helper",
+    "description": "ACG Helper",
+    "version": "1.0.0",
+    "author": "Jacques De SAGAN",
+    "manifest_version": 2,
+    "permissions": ["tabs", "cookies", "webRequest", "contextMenus", "webRequestBlocking", "*://*/*"],
+    "icons": {
+        "16": "icons/sora_16x16.png",
+        "48": "icons/sora_48x48.png"
     },
-    {
-      "matches": ["*://www.dlsite.com/*"],
-      "js": ["content-dlsite.js"]
-    }
-  ],
-  "background": {
-    "scripts": ["background.js"],
-    "persistent": true
-  },
-  "browser_action": {
-          "default_title": "Galgame Helper",      // optional; shown in tooltip
-          "default_popup": "popup.html"        // optional
+    "content_scripts": [
+        {
+            "matches": ["*://*/*"],
+            "js": ["content.js"]
+        },
+        {
+            "matches": ["*://pan.baidu.com/*"],
+            "run_at": "document_end",
+            "js": ["content-baidupan.js"]
+        },
+        {
+            "matches": ["*://www.dlsite.com/*"],
+            "js": ["content-dlsite.js"]
+        }
+    ],
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": true
+    },
+    "browser_action": {
+        "default_title": "Sora Helper",      // optional; shown in tooltip
+        "default_popup": "popup.html"        // optional
     }
 }
