@@ -24,6 +24,10 @@
         {
             "matches": ["*://www.dlsite.com/*"],
             "js": ["content-dlsite.js"]
+        },
+        {
+            "matches": ["https://novel18.syosetu.com/*/"],
+            "js": ["content-syosetu.js"]
         }
     ],
     "background": {
