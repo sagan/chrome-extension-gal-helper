@@ -1,19 +1,14 @@
-let naviBar, titleEl, authorEl, downloadBtn, downloadTxtLink;
+const parser = new DOMParser();
 const STR_DOWNLOAD = "Download text";
+let downloadBtn;
 
 window.addEventListener("load", () => {
-  // alert('ok');
-  naviBar = document.querySelector("#head_nav");
-  titleEl = document.querySelector(".novel_title");
-  authorEl = document.querySelector(".novel_writername");
-  downloadTxtLink = Array.from(
-    document.querySelectorAll(".undernavi li a")
-  ).find(el => el.innerText == "TXTダウンロード");
+  let naviBar = document.querySelector("#head_nav");
 
   downloadBtn = document.createElement("button");
   downloadBtn.innerHTML = STR_DOWNLOAD;
   downloadBtn.addEventListener("click", downloadTxt);
-  naviBar.appendChild(downloadBtn, titleEl);
+  naviBar.appendChild(downloadBtn);
 });
 
 async function downloadTxt() {
@@ -21,23 +16,28 @@ async function downloadTxt() {
     downloadBtn.disabled = true;
     downloadBtn.innerText = "Getting list...";
 
-    let title = titleEl.innerText;
-    let author = authorEl.innerText;
     let url = location.href;
+    let selfText = await downloadUrl(url);
+    let selfHtmlDoc = parser.parseFromString(selfText, "text/html");
+    let title = selfHtmlDoc.querySelector(".novel_title").innerText.trim();
+    let author = selfHtmlDoc.querySelector(".novel_writername").innerText.trim();
+    let desc = selfHtmlDoc.querySelector("#novel_ex").innerText.trim();
+    let mtime = selfHtmlDoc.querySelector('meta[name="WWWC"]').getAttribute("content").trim();
+    let str = `${title}\n${author}\n${mtime}\n${url}\n\n${desc}\n\n`;
 
-    let str = `${title}\n${author}\n${url}\n\n`;
+    let downloadTxtLink = Array.from(
+      selfHtmlDoc.querySelectorAll(".undernavi li a")
+    ).find(el => el.innerText == "TXTダウンロード");
     let listText = await downloadUrl(downloadTxtLink.href);
-    const parser = new DOMParser();
-    const listHtmlDoc = parser.parseFromString(listText, "text/html");
-
+    let listHtmlDoc = parser.parseFromString(listText, "text/html");
     let chapters = Array.from(
       listHtmlDoc.querySelectorAll('select[name="no"] option')
     ).map(el => ({
       no: el.getAttribute("value"),
-      title: el.innerText
+      title: el.innerText.trim(),
     }));
     str += chapters.map(c => c.title).join("\n") + "\n\n";
-    console.log(str);
+    // console.log(str);return;
 
     let chapterDownloadLink =
       listHtmlDoc.querySelector('form[name="dl"]').getAttribute("action") +
@@ -70,7 +70,7 @@ async function downloadUrl(url) {
     try {
       let res = await fetch(url);
       if (res.status != 200) {
-        if (i == 5) {
+        if (i == 10) {
           throw new Error(`download ${url} failed after ${i} tries`);
         }
         await sleep(i * 1000);
@@ -88,11 +88,10 @@ function sleep(ms) {
   });
 }
 
-
 function browserDownload(content, filename, contentType) {
-  if(!contentType) contentType = 'application/octet-stream';
-  var a = document.createElement('a');
-  var blob = new Blob([content], {'type':contentType});
+  if (!contentType) contentType = "application/octet-stream";
+  var a = document.createElement("a");
+  var blob = new Blob([content], { type: contentType });
   a.href = window.URL.createObjectURL(blob);
   a.download = filename;
   a.click();
