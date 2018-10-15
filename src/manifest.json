@@ -28,7 +28,7 @@
             "js": ["content-dlsite.js"]
         },
         {
-            "matches": ["https://novel18.syosetu.com/*/"],
+            "matches": ["*://novel18.syosetu.com/*/"],
             "js": ["content-syosetu.js"]
         }
     ],
