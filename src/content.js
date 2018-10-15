@@ -16,4 +16,15 @@ document.addEventListener('selectionchange', function() {
     }
 });
 
+
+window.addEventListener('click', (e) => {
+    let i = 0, el = e.target;
+    while( el && el.tagName != 'A' && i++ < 3 ) {
+        el = el.parentNode;
+    }
+    if( el && el.tagName == "A" && el.href ) {
+        
+    }
+});
+
 // window.getSelection().getRangeAt(0).startContainer.parentNode.textContent.trim()
