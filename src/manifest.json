@@ -35,7 +35,7 @@
       "js": ["content-dlsite.js"]
     },
     {
-      "matches": ["*://novel18.syosetu.com/*/"],
+      "matches": ["*://novel18.syosetu.com/*/", "*://ncode.syosetu.com/*/"],
       "js": ["content-syosetu.js"]
     }
   ],

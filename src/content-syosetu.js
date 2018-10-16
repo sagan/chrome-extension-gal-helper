@@ -13,7 +13,7 @@ window.addEventListener("load", () => {
   downloadBtn.innerHTML = STR_DOWNLOAD;
   downloadBtn.addEventListener("click", downloadTxt);
   naviBar.appendChild(document.createElement("li"));
-  naviBar.querySelector('li:last-child').appendChild(downloadBtn);
+  naviBar.querySelector("li:last-child").appendChild(downloadBtn);
 });
 
 async function downloadTxt() {
@@ -28,7 +28,8 @@ async function downloadTxt() {
     let author = selfHtmlDoc
       .querySelector(".novel_writername")
       .innerText.trim();
-    let desc = selfHtmlDoc.querySelector("#novel_ex").innerText.trim();
+    let desc = selfHtmlDoc.querySelector("#novel_ex");
+    desc = desc ? desc.innerText.trim() : "";
     let mtime = selfHtmlDoc
       .querySelector('meta[name="WWWC"]')
       .getAttribute("content")
@@ -41,28 +42,32 @@ async function downloadTxt() {
     ).find(el => el.innerText == "TXTダウンロード");
     let listText = await downloadUrl(downloadTxtLink.href);
     let listHtmlDoc = parser.parseFromString(listText, "text/html");
-    let chapters = Array.from(
-      listHtmlDoc.querySelectorAll('select[name="no"] option')
-    ).map(el => ({
-      no: el.getAttribute("value"),
-      title: el.innerText.trim()
-    }));
-    str += chapters.map(c => c.title).join("\n") + "\n\n";
-    // console.log(str);return;
 
     let chapterDownloadLink =
       listHtmlDoc.querySelector('form[name="dl"]').getAttribute("action") +
       "?hankaku=0&code=utf-8&kaigyo=lf";
+    if (listHtmlDoc.querySelector('select[name="no"]')) {
+      let chapters = Array.from(
+        listHtmlDoc.querySelectorAll('select[name="no"] option')
+      ).map(el => ({
+        no: el.getAttribute("value"),
+        title: el.innerText.trim()
+      }));
+      str += chapters.map(c => c.title).join("\n") + "\n\n";
+      // console.log(str);return;
 
-    for (let i = 0; i < chapters.length; i++) {
-      let chapter = chapters[i];
-      downloadBtn.innerText =
-        STR_DOWNLOAD_CHAPTER + `${i + 1}/${chapters.length}`;
-      let text = await downloadUrl(chapterDownloadLink + `&no=${chapter.no}`);
+      for (let i = 0; i < chapters.length; i++) {
+        let chapter = chapters[i];
+        downloadBtn.innerText =
+          STR_DOWNLOAD_CHAPTER + `${i + 1}/${chapters.length}`;
+        let text = await downloadUrl(chapterDownloadLink + `&no=${chapter.no}`);
 
-      str += chapter.title + "\n\n" + text + "\n\n";
-      await sleep(100);
-      // console.log(str); break;
+        str += chapter.title + "\n\n" + text + "\n\n";
+        await sleep(100);
+        // console.log(str); break;
+      }
+    } else {
+      str += await downloadUrl(chapterDownloadLink);
     }
 
     browserDownload(str, `${title} (${author}) (更新日：${mdate}).txt`);
