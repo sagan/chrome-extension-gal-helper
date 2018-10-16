@@ -10,8 +10,17 @@ window.addEventListener("load", () => {
   let naviBar = document.querySelector("#head_nav");
 
   downloadBtn = document.createElement("button");
-  downloadBtn.innerHTML = STR_DOWNLOAD;
+  downloadBtn.setAttribute("title", STR_DOWNLOAD);
+  downloadBtn.setAttribute(
+    "style",
+    `font-size: 12px;padding: 5px 10px;background: #fffaf4;border: 2px solid #f4c28d;color: #efac6a;text-align: center;font-weight: bold;cursor: pointer;`
+  );
+  downloadBtn.innerHTML = "TXT ↓";
   downloadBtn.addEventListener("click", downloadTxt);
+  naviBar.appendChild(document.createElement("li"));
+  naviBar.querySelector(
+    "li:last-child"
+  ).innerHTML = `<a href="https://noc.syosetu.com/top/top/" title="ホーム">⌂</a>`;
   naviBar.appendChild(document.createElement("li"));
   naviBar.querySelector("li:last-child").appendChild(downloadBtn);
 });
@@ -19,17 +28,20 @@ window.addEventListener("load", () => {
 async function downloadTxt() {
   try {
     downloadBtn.disabled = true;
-    downloadBtn.innerText = STR_DOWNLOAD_LIST;
+    downloadBtn.textContent = STR_DOWNLOAD_LIST;
 
-    let url = location.href;
+    let url = Array.from(document.querySelectorAll(".novel_bn a")).find(
+      el => el.textContent.trim() == "目次"
+    );
+    url = (url || location).href;
     let selfText = await downloadUrl(url);
     let selfHtmlDoc = parser.parseFromString(selfText, "text/html");
-    let title = selfHtmlDoc.querySelector(".novel_title").innerText.trim();
+    let title = selfHtmlDoc.querySelector(".novel_title").textContent.trim();
     let author = selfHtmlDoc
       .querySelector(".novel_writername")
-      .innerText.trim();
+      .textContent.trim();
     let desc = selfHtmlDoc.querySelector("#novel_ex");
-    desc = desc ? desc.innerText.trim() : "";
+    desc = desc ? desc.textContent.trim() : "";
     let mtime = selfHtmlDoc
       .querySelector('meta[name="WWWC"]')
       .getAttribute("content")
@@ -39,7 +51,7 @@ async function downloadTxt() {
 
     let downloadTxtLink = Array.from(
       selfHtmlDoc.querySelectorAll(".undernavi li a")
-    ).find(el => el.innerText == "TXTダウンロード");
+    ).find(el => el.textContent == "TXTダウンロード");
     let listText = await downloadUrl(downloadTxtLink.href);
     let listHtmlDoc = parser.parseFromString(listText, "text/html");
 
@@ -51,14 +63,14 @@ async function downloadTxt() {
         listHtmlDoc.querySelectorAll('select[name="no"] option')
       ).map(el => ({
         no: el.getAttribute("value"),
-        title: el.innerText.trim()
+        title: el.textContent.trim()
       }));
       str += chapters.map(c => c.title).join("\n") + "\n\n";
       // console.log(str);return;
 
       for (let i = 0; i < chapters.length; i++) {
         let chapter = chapters[i];
-        downloadBtn.innerText =
+        downloadBtn.textContent =
           STR_DOWNLOAD_CHAPTER + `${i + 1}/${chapters.length}`;
         let text = await downloadUrl(chapterDownloadLink + `&no=${chapter.no}`);
 
@@ -70,13 +82,13 @@ async function downloadTxt() {
       str += await downloadUrl(chapterDownloadLink);
     }
 
-    browserDownload(str, `${title} (${author}) (更新日：${mdate}).txt`);
+    browserDownload(str, `${title} (${author}) (更新日：${mdate}) (syosetu).txt`);
     console.log("download finish", str.length);
     downloadBtn.disabled = false;
-    downloadBtn.innerText = STR_DOWNLOAD_FINISH;
+    downloadBtn.textContent = STR_DOWNLOAD_FINISH;
   } catch (e) {
     downloadBtn.disabled = false;
-    downloadBtn.innerText = STR_DOWNLOAD_ERROR + e;
+    downloadBtn.textContent = STR_DOWNLOAD_ERROR + e;
   }
 }
 

@@ -37,6 +37,10 @@
     {
       "matches": ["*://novel18.syosetu.com/*/", "*://ncode.syosetu.com/*/"],
       "js": ["content-syosetu.js"]
+    },
+    {
+      "matches": ["*://www.pixiv.net/novel/show.php?*"],
+      "js": ["content-pixiv-syousetu.js"]
     }
   ],
   "background": {
