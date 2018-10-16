@@ -23,6 +23,7 @@ async function downloadTxt() {
     let author = selfHtmlDoc.querySelector(".novel_writername").innerText.trim();
     let desc = selfHtmlDoc.querySelector("#novel_ex").innerText.trim();
     let mtime = selfHtmlDoc.querySelector('meta[name="WWWC"]').getAttribute("content").trim();
+    let mdate = mtime.split(/\s+/)[0].replace(/\//g, '-');
     let str = `${title}\n${author}\n${mtime}\n${url}\n\n${desc}\n\n`;
 
     let downloadTxtLink = Array.from(
@@ -53,7 +54,7 @@ async function downloadTxt() {
       // console.log(str); break;
     }
 
-    browserDownload(str, `${title} (${author}).txt`);
+    browserDownload(str, `${title} (${author}) (更新日：${mdate}).txt`);
     console.log("download finish", str.length);
     downloadBtn.disabled = false;
     downloadBtn.innerText = "Finish";
