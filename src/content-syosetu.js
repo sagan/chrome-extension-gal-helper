@@ -1,5 +1,9 @@
 const parser = new DOMParser();
-const STR_DOWNLOAD = "Download text";
+const STR_DOWNLOAD = "TXT一括ダウンロード";
+const STR_DOWNLOAD_ERROR = "✕ ダウンロード失敗、錯誤：";
+const STR_DOWNLOAD_FINISH = "✓ ダウンロード完成";
+const STR_DOWNLOAD_LIST = "リストを取得...";
+const STR_DOWNLOAD_CHAPTER = "チャプターを取得...";
 let downloadBtn;
 
 window.addEventListener("load", () => {
@@ -8,22 +12,28 @@ window.addEventListener("load", () => {
   downloadBtn = document.createElement("button");
   downloadBtn.innerHTML = STR_DOWNLOAD;
   downloadBtn.addEventListener("click", downloadTxt);
-  naviBar.appendChild(downloadBtn);
+  naviBar.appendChild(document.createElement("li"));
+  naviBar.querySelector('li:last-child').appendChild(downloadBtn);
 });
 
 async function downloadTxt() {
   try {
     downloadBtn.disabled = true;
-    downloadBtn.innerText = "Getting list...";
+    downloadBtn.innerText = STR_DOWNLOAD_LIST;
 
     let url = location.href;
     let selfText = await downloadUrl(url);
     let selfHtmlDoc = parser.parseFromString(selfText, "text/html");
     let title = selfHtmlDoc.querySelector(".novel_title").innerText.trim();
-    let author = selfHtmlDoc.querySelector(".novel_writername").innerText.trim();
+    let author = selfHtmlDoc
+      .querySelector(".novel_writername")
+      .innerText.trim();
     let desc = selfHtmlDoc.querySelector("#novel_ex").innerText.trim();
-    let mtime = selfHtmlDoc.querySelector('meta[name="WWWC"]').getAttribute("content").trim();
-    let mdate = mtime.split(/\s+/)[0].replace(/\//g, '-');
+    let mtime = selfHtmlDoc
+      .querySelector('meta[name="WWWC"]')
+      .getAttribute("content")
+      .trim();
+    let mdate = mtime.split(/\s+/)[0].replace(/\//g, "-");
     let str = `${title}\n${author}\n${mtime}\n${url}\n\n${desc}\n\n`;
 
     let downloadTxtLink = Array.from(
@@ -35,7 +45,7 @@ async function downloadTxt() {
       listHtmlDoc.querySelectorAll('select[name="no"] option')
     ).map(el => ({
       no: el.getAttribute("value"),
-      title: el.innerText.trim(),
+      title: el.innerText.trim()
     }));
     str += chapters.map(c => c.title).join("\n") + "\n\n";
     // console.log(str);return;
@@ -46,7 +56,8 @@ async function downloadTxt() {
 
     for (let i = 0; i < chapters.length; i++) {
       let chapter = chapters[i];
-      downloadBtn.innerText = `Download chapter ${i + 1}/${chapters.length}...`;
+      downloadBtn.innerText =
+        STR_DOWNLOAD_CHAPTER + `${i + 1}/${chapters.length}`;
       let text = await downloadUrl(chapterDownloadLink + `&no=${chapter.no}`);
 
       str += chapter.title + "\n\n" + text + "\n\n";
@@ -57,10 +68,10 @@ async function downloadTxt() {
     browserDownload(str, `${title} (${author}) (更新日：${mdate}).txt`);
     console.log("download finish", str.length);
     downloadBtn.disabled = false;
-    downloadBtn.innerText = "Finish";
+    downloadBtn.innerText = STR_DOWNLOAD_FINISH;
   } catch (e) {
     downloadBtn.disabled = false;
-    downloadBtn.innerText = "Error " + e;
+    downloadBtn.innerText = STR_DOWNLOAD_ERROR + e;
   }
 }
 
@@ -71,10 +82,10 @@ async function downloadUrl(url) {
     try {
       let res = await fetch(url);
       if (res.status != 200) {
-        if (i == 10) {
-          throw new Error(`download ${url} failed after ${i} tries`);
-        }
-        await sleep(i * 1000);
+        // if (i == 10) {
+        //   throw new Error(`download ${url} failed after ${i} tries`);
+        // }
+        await sleep(Math.min(i * 1000, 10000));
         continue;
       }
       let txt = await res.text();

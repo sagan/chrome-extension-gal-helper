@@ -1,43 +1,50 @@
 {
-    "name": "Sora Helper",
-    "description": "ACG Helper",
-    "version": "1.0.0",
-    "author": "Jacques De SAGAN",
-    "manifest_version": 2,
-    "permissions": ["tabs", "cookies", "webRequest", "contextMenus", "webRequestBlocking", "*://*/*"],
-    "icons": {
-        "16": "icons/sora_16x16.png",
-        "48": "icons/sora_48x48.png",
-        "64": "icons/sora_64x64.png",
-        "128": "icons/sora_128x128.png"
+  "name": "Sora Helper",
+  "description": "ACG Helper",
+  "version": "1.0.0",
+  "author": "Jacques De SAGAN",
+  "manifest_version": 2,
+  "permissions": [
+    "tabs",
+    "cookies",
+    "webRequest",
+    "contextMenus",
+    "webRequestBlocking",
+    "*://*/*"
+  ],
+  "icons": {
+    "16": "icons/sora_16x16.png",
+    "48": "icons/sora_48x48.png",
+    "64": "icons/sora_64x64.png",
+    "128": "icons/sora_128x128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "js": ["content.js"]
     },
-    "content_scripts": [
-        {
-            "matches": ["*://*/*"],
-            "run_at": "document_start",
-            "all_frames": true,
-            "js": ["content.js"]
-        },
-        {
-            "matches": ["*://pan.baidu.com/*"],
-            "run_at": "document_end",
-            "js": ["content-baidupan.js"]
-        },
-        {
-            "matches": ["*://www.dlsite.com/*"],
-            "js": ["content-dlsite.js"]
-        },
-        {
-            "matches": ["*://novel18.syosetu.com/*/"],
-            "js": ["content-syosetu.js"]
-        }
-    ],
-    "background": {
-        "scripts": ["background.js"],
-        "persistent": true
+    {
+      "matches": ["*://pan.baidu.com/*"],
+      "run_at": "document_end",
+      "js": ["content-baidupan.js"]
     },
-    "browser_action": {
-        "default_title": "Sora Helper",
-        "default_popup": "popup.html"
+    {
+      "matches": ["*://www.dlsite.com/*"],
+      "js": ["content-dlsite.js"]
+    },
+    {
+      "matches": ["*://novel18.syosetu.com/*/"],
+      "js": ["content-syosetu.js"]
     }
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+  "browser_action": {
+    "default_title": "Sora Helper",
+    "default_popup": "popup.html"
+  }
 }
