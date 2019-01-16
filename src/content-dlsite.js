@@ -1,9 +1,9 @@
 function getItem() {
   if (document.querySelector("h1#work_name")) {
     // is a dlsite item page
-    var titles = document.querySelectorAll('.topicpath li');
+    var titles = document.querySelectorAll(".topicpath li");
     var title = titles[titles.length - 1].textContent.trim();
-    var brand = document.querySelector('.maker_name').textContent.trim();
+    var brand = document.querySelector(".maker_name").textContent.trim();
     var id = location.href.match(/\/([RBV]J\d{5,})\.html/)[1];
     var genresList = document.querySelectorAll(".work_genre a");
     var sellday = document
@@ -27,12 +27,13 @@ function getItem() {
 
 function getType(genres) {
   var type = "";
-
-  if (genres.indexOf("18禁") != -1) type += "18禁";
-  if (genres.indexOf("音声作品") != -1) {
-    type += "音声作品";
-  } else if (genres.indexOf("動画作品") != -1) {
-    type += "動画作品";
+  if (genres.indexOf("18禁") != -1) {
+    type += "18禁";
+  }
+  if (genres.indexOf("音声") != -1) {
+    type += "音声";
+  } else if (genres.indexOf("動画") != -1) {
+    type += "動画";
   } else if (genres.indexOf("マンガ") != -1) {
     type += "マンガ";
   } else if (genres.indexOf("ノベル") != -1) {
@@ -64,7 +65,7 @@ function isDoujinn(genres) {
       "(" +
       getType(item.genres) +
       ")" +
-      (isDoujinn(item.genres) ? "(同人)" : "") +
+      // (isDoujinn(item.genres) ? "(同人)" : "") +
       "[" +
       item.sellday.substr(2).replace(/-/g, "") +
       "]" +
